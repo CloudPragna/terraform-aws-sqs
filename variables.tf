@@ -10,12 +10,6 @@ variable "name" {
   default     = null
 }
 
-variable "name_prefix" {
-  description = "A unique name beginning with the specified prefix."
-  type        = string
-  default     = null
-}
-
 variable "visibility_timeout_seconds" {
   description = "The visibility timeout for the queue. An integer from 0 to 43200 (12 hours)"
   type        = number
