@@ -8,8 +8,8 @@ resource "aws_kms_key" "this" {
   deletion_window_in_days  = var.deletion_window_in_days
   is_enabled               = var.is_enabled
   #checkov:skip=CKV_AWS_7: ******
-  enable_key_rotation      = var.enable_key_rotation
-  tags                     = var.tags
+  enable_key_rotation = var.enable_key_rotation
+  tags                = var.tags
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
@@ -48,4 +48,33 @@ resource "aws_sqs_queue" "this" {
   kms_data_key_reuse_period_seconds = var.kms_data_key_reuse_period_seconds
 
   tags = var.tags
+}
+
+############ SQS Policy #####
+resource "aws_sqs_queue_policy" "this" {
+  count     = var.source_arn == "" ? 0 : 1
+  queue_url = aws_sqs_queue.this[0].id
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Id": "sqspolicy",
+  "Statement": [
+    {
+      "Sid": "First",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "SQS:*",
+      "Resource": "${aws_sqs_queue.this[0].arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${var.source_arn}"
+        }
+      }
+    }
+  ]
+}
+POLICY
 }

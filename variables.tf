@@ -131,3 +131,10 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+######### SNS and S3 Integration #######
+variable "source_arn" {
+  type        = string
+  description = "S3 ARN for SQS Policies"
+  default     = ""
+}
